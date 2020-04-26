@@ -17,7 +17,7 @@ The file will have the following columns -
 | Column Name | Explanation | Content |
 |---|---|---|
 | date | Date of the data | ISO date of the data (e.g. `2020-03-21`) |
-| id | internal id | positive integer |
+| id | internal id | any type |
 | area_id | The official id of the area | Statistic Area id (`xxxx-yy`) or CBS City id (i.e. just the `xxxx`) |
 | is_city | Is this a city or a neighborhood? | Boolean, 1 for city and 0 for neighborhood |
 | city_name | The English name of the city the area belongs to | Official English name as defined [here](https://data.gov.il/dataset/citiesandsettelments). Name should be in all uppercase letters |
