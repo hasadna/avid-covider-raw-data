@@ -19,5 +19,5 @@ def upload_tileset(data, tileset_id, tileset_name):
             url=creds['url'],
             name=tileset_name,
         ))
-    logging.info('UPLOAD Tileset %s (%s) @ %s:\n%s', tileset_id, tileset_name, url, response.text)
+    logging.info('UPLOAD Tileset %s (%s):\n%s', tileset_id, tileset_name, response.text)
 
