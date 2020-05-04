@@ -3,7 +3,7 @@ import requests
 import logging
 
 def mapbox_api_key():
-    return os.environ['MAPBOX_API_KEY']
+    return os.environ['MAPBOX_API_TOKEN']
 
 def upload_tileset(tileset_id, tileset_name, url):
     response = requests.post('https://api.mapbox.com/uploads/v1/wios', dict(
