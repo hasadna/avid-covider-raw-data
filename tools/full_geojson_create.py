@@ -24,7 +24,7 @@ def process_file(key, filename, latest):
         properties.update(
             latest.get(properties['id'], default)
         )
-    upload = json.dumps(gj, cls=encoder)
+    upload = json.dumps(gj, cls=encoder).encode('utf8')
     path = 'data/tilesets/STATIC-IMAGES-{}.geojson'.format(key)
     upload_file(upload, path)
     url = 'https://avid-covider.phonaris.com/' + path

@@ -28,7 +28,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         python tools/map_coloring.py
-    - name: Map coloring
+    - name: Prepare tileset for static maps
       env: # Or as an environment variable
         AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
