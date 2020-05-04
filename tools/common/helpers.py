@@ -1,6 +1,7 @@
 import glob
 import os
 import logging
+import tempfile
 from io import BytesIO
 
 import boto3
@@ -25,8 +26,10 @@ def upload_file(data, object_name):
                     aws_access_key_id=os.environ['AWS_ACCESS_KEY'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
     for bucket_name in buckets:
         try:
-            f = BytesIO(data)
-            response = s3_client.upload_fileobj(f, bucket_name, object_name, ExtraArgs={'ACL': 'public-read'})
+            with tempfile.NamedTemporaryFile('wb') as f:
+                f.write(data)
+                f.close()
+                response = s3_client.upload_file(f.name, bucket_name, object_name, ExtraArgs={'ACL': 'public-read'})
         except ClientError as e:
             logging.error(e)
             return False

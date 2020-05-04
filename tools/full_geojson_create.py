@@ -27,7 +27,7 @@ def process_file(key, filename, latest):
         )
     upload = json.dumps(gj, cls=encoder).encode('utf8')
     path = 'data/tilesets/static-images-{}.geojson'.format(key)
-    logging.info('UPLOADING to %s', path)
+    logging.info('UPLOADING %d bytes to %s', len(upload), path)
     upload_file(upload, path)
     url = 'https://avid-covider.phonaris.com/' + path
     upload_tileset('static-images-' + key, 'Static Images: ' + key, url)
