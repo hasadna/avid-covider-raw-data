@@ -28,7 +28,7 @@ def upload_tileset(data, tileset_id):
         complete, progress = response['complete'], response['progress']
         logging.info('UPLOAD Tileset %s -> %s (complete=%s, progress=%s)', tileset_id, upload_id, complete, progress)
         if not complete:
-            time.sleep(5000)
+            time.sleep(5)
 
 
 
