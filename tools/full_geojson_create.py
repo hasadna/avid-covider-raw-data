@@ -1,6 +1,7 @@
 import json
 import decimal
 import os
+import logging
 import dataflows as DF
 from common import geo_file, latest_file, upload_file, upload_tileset
 
@@ -25,7 +26,7 @@ def process_file(key, filename, latest):
             latest.get(properties['id'], default)
         )
     upload = json.dumps(gj, cls=encoder).encode('utf8')
-    path = 'data/tilesets/STATIC-IMAGES-{}.geojson'.format(key)
+    path = 'data/tilesets/static-images-{}.geojson'.format(key)
     logging.info('UPLOADING to %s', path)
     upload_file(upload, path)
     url = 'https://avid-covider.phonaris.com/' + path
