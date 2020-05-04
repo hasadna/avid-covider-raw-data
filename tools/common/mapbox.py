@@ -1,6 +1,7 @@
 import os
 import requests
 import logging
+import time
 import boto3
 
 def mapbox_api_key():
@@ -18,6 +19,16 @@ def upload_tileset(data, tileset_id):
             tileset='wios.' + tileset_id,
             name=tileset_id,
             url=creds['url'],
-        ))
-    logging.info('UPLOAD Tileset %s:\n%s', tileset_id, response.text)
+        )).json()
+    upload_id = response['id']
+    complete = False
+    progress = 0
+    while not complete:
+        response = requests.get('https://api.mapbox.com/uploads/v1/wios/{}?access_token={}'.format(upload_id, mapbox_api_key())).json()
+        complete, progress = response['complete'], response['progress']
+        logging.info('UPLOAD Tileset %s -> %s (complete=%s, progress=%s)', tileset_id, upload_id, complete, progress)
+        if not complete:
+            time.sleep(5000)
+
+
 
