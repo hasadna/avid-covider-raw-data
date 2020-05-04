@@ -6,10 +6,16 @@ from io import BytesIO
 import boto3
 from botocore.exceptions import ClientError
 
-data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'input'))
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+data_dir = os.path.join(root_dir, 'input')
+geo_dir = os.path.join(root_dir, 'geo')
+
 
 def latest_file():
     return sorted(glob.glob(os.path.join(data_dir, '*.csv')))[-1]
+
+def geo_file(name):
+    return os.path.join(geo_dir, name + '.geojson')
 
 def upload_file(data, object_name):
     buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']

@@ -28,3 +28,10 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         python tools/map_coloring.py
+    - name: Map coloring
+      env: # Or as an environment variable
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
+      run: |
+        python tools/full_geojson_create.py
