@@ -29,7 +29,7 @@ def process_file(key, filename, latest):
     path = 'data/tilesets/static-images-{}.geojson'.format(key)
     logging.info('UPLOADING %d bytes to %s', len(upload), path)
     upload_file(upload, path)
-    upload_tileset(upload, 'static-images-' + key, 'Static Images: ' + key)
+    upload_tileset(upload, 'static-images-' + key)
 
 
 if __name__ == '__main__':
