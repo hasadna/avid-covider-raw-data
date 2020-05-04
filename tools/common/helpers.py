@@ -28,7 +28,7 @@ def upload_file(data, object_name):
         try:
             with tempfile.NamedTemporaryFile('wb') as f:
                 f.write(data)
-                f.close()
+                f.flush()
                 response = s3_client.upload_file(f.name, bucket_name, object_name, ExtraArgs={'ACL': 'public-read'})
         except ClientError as e:
             logging.error(e)
