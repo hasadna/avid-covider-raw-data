@@ -26,7 +26,7 @@ def upload_file(data, object_name):
                     aws_access_key_id=os.environ['AWS_ACCESS_KEY'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
     for bucket_name in buckets:
         try:
-            response = s3_client.put_object(Body=data, Bucket=bucket_name, Key=object_name, ACL='public-read')
+            response = s3_client.put_object(Body=data, Bucket=bucket_name, Key=object_name, ACL='public-read', CacheControl='max-age=600')
         except ClientError as e:
             logging.error(e)
             return False
