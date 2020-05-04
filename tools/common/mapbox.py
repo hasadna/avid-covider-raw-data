@@ -16,6 +16,7 @@ def upload_tileset(data, tileset_id):
     response = requests.post('https://api.mapbox.com/uploads/v1/wios?access_token={}'.format(mapbox_api_key()),
         json=dict(
             tileset='wios.' + tileset_id,
+            name=tileset_id,
             url=creds['url'],
         ))
     logging.info('UPLOAD Tileset %s:\n%s', tileset_id, response.text)
