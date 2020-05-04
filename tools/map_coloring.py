@@ -14,22 +14,28 @@ COLOR_SCALE = [
     [5, '#ff5fd8'],
     [1000, '#f700ff'],
 ]
-CUTOFF_LOW = 40
+CUTOFF_LOW = 20
+CUTOFF_LOW_CITIES = 40
 CUTOFF_HIGH = 200
 
-def fill_color(city, num_reports, sr):
+def fill_color(city, num_reports, sr, city_reports):
     if num_reports < CUTOFF_LOW:
-        return None
+        return (None, 'no-fill')
+    elif num_reports < CUTOFF_LOW_CITIES:
+        if city:
+            return (None, 'no-fill')
+        elif city_reports < CUTOFF_LOW_CITIES:
+            return (None, 'no-fill')
     for level, color in COLOR_SCALE:
         if sr < level:
-            return color
-    return color
+            return (color, 'band-below-{}'.format(level))
+    return (color, 'band-below-{}'.format(level))
 
-def pattern(city, num_reports, sr):
+def pattern(city, num_reports, sr, city_reports):
     if num_reports >= CUTOFF_HIGH:
-        return 'none'
+        return ('none', 'conf-high')
     else:
-        return None
+        return (None, 'conf-low')
 
 def props():
     def func(rows):
@@ -37,7 +43,7 @@ def props():
             for k, f in [('fill', fill_color), ('pattern', pattern)]:
                 r = copy.copy(row)
                 r['kind'] = k
-                r['property'] = f(r['is_city'] == 1, r['num_reports_weighted'], r['symptoms_ratio_weighted'])
+                r['property'], r['desc'] = f(r['is_city'] == 1, r['num_reports_weighted'], r['symptoms_ratio_weighted'], r['num_city_reports'])
                 yield r
     return func
 
@@ -49,15 +55,26 @@ if __name__ == '__main__':
     neighborhood_fill_pattern_cases = ['case']
 
     r, _, _ = DF.Flow(
+        DF.load(latest_file(), name='cities', cast_strategy=DF.load.CAST_WITH_SCHEMA),
+        DF.filter_rows(lambda r: r['is_city']),
         DF.load(latest_file(), name='out', cast_strategy=DF.load.CAST_WITH_SCHEMA),
+        DF.join('cities', ['city_name'], 'out', ['city_name'], dict(
+            num_city_reports=dict(name='num_reports_weighted')
+        )),
+        DF.add_field('desc', 'string', ''),
         DF.add_field('kind', 'string', ''),
         DF.add_field('property', 'string', ''),
         props(),
-        DF.filter_rows(lambda r: r['property'] is not None),
-        DF.join_self('out', ['is_city', 'kind', 'property'], 'out', dict(is_city=None, kind=None, property=None, id=dict(aggregate='array'))),
+        DF.join_with_self('out', ['is_city', 'kind', 'desc', 'property'],
+                          dict(is_city=None, kind=None, desc=None, property=None, id=dict(aggregate='array'))),
     ).results()
 
     for item in r[0]:
+        print('bucket for {} {} {}: {}'.format(
+            'city' if item['is_city'] else 'neighborhood', item['kind'], item['desc'], len(item['id'])
+        ))
+        if item['property'] is None: 
+            continue
         if item['kind'] == 'fill':
             if item['is_city']:
                 city_fill_color_cases.extend([

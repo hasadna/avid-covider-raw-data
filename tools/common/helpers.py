@@ -12,7 +12,7 @@ def latest_file():
     return sorted(glob.glob(os.path.join(data_dir, '*.csv')))[-1]
 
 def upload_file(data, object_name):
-    buckets = ['avid-covider.phonaris.com']#, 'coronaisrael.org']
+    buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']
     
     # Upload the file
     s3_client = boto3.client('s3', region_name='eu', endpoint_url='https://storage.googleapis.com',
