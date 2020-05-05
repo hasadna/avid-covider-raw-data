@@ -45,7 +45,7 @@ if __name__ == '__main__':
         ))
     ).results()
     data = dict(
-        ((r.pop('id'), r.pop('is_city')), r) for r in data[0]
+        ((r.pop('id'), r.get('is_city')), r) for r in data[0]
     )
     for key, is_city in [('cities', 1), ('neighborhoods', 0)]:
         process_file(key, is_city, geo_file(key), data)
