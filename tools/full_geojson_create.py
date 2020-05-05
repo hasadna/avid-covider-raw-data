@@ -12,7 +12,7 @@ class encoder(json.JSONEncoder):
         return JSONEncoder.default(self, o)
 
 
-def process_file(key, filename, latest):
+def process_file(key, is_city, filename, latest):
     gj = json.load(open(filename))
     default = dict(
         latest_confidence = 0,
@@ -23,7 +23,7 @@ def process_file(key, filename, latest):
     for feature in gj['features']:
         properties = feature['properties']
         properties.update(
-            latest.get(properties['id'], default)
+            latest.get((properties['id'], is_city), default)
         )
     upload = json.dumps(gj, cls=encoder).encode('utf8')
     path = 'data/tilesets/static-images-{}.geojson'.format(key)
@@ -37,6 +37,7 @@ if __name__ == '__main__':
         DF.load(latest_file(), name='out', cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.concatenate(dict(
             id=[],
+            is_city=[],
             latest_confidence=['symptoms_ratio_confidence_weighted'],
             latest_ratio=['symptoms_ratio_weighted'],
             latest_reports=['num_reports_weighted'],
@@ -44,7 +45,7 @@ if __name__ == '__main__':
         ))
     ).results()
     data = dict(
-        (r.pop('id'), r) for r in data[0]
+        ((r.pop('id'), r.pop('is_city')), r) for r in data[0]
     )
-    for key in ['cities', 'neighborhoods']:
-        process_file(key, geo_file(key), data)
+    for key, is_city in [('cities', 1), ('neighborhoods', 0)]:
+        process_file(key, is_city, geo_file(key), data)
