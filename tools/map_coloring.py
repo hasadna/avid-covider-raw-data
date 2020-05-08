@@ -7,11 +7,11 @@ import tabulator
 from common import latest_file, upload_file
 
 COLOR_SCALE = [
-    [1, '#fae700'],
-    [2, '#ffca5d'],
-    [3, '#ffad88'],
-    [4, '#ff8caf'],
-    [5, '#ff5fd8'],
+    [0.8, '#fae700'],
+    [0.9, '#ffca5d'],
+    [1.0, '#ffad88'],
+    [1.1, '#ff8caf'],
+    [1.2, '#ff5fd8'],
     [1000, '#f700ff'],
 ]
 CUTOFF_LOW = 20
