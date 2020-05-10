@@ -20,7 +20,7 @@ def geo_file(name):
     return os.path.join(geo_dir, name + '.geojson')
 
 def upload_file(data, object_name):
-    buckets = ['avid-covider.phonaris.com'] #, 'coronaisrael.org']
+    buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']
     
     # Upload the file
     s3_client = boto3.client('s3', region_name='eu', endpoint_url='https://storage.googleapis.com',
