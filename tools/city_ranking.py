@@ -33,7 +33,7 @@ if __name__ == '__main__':
         DF.delete_fields(['sortkey']),
         DF.add_field('rank', 'integer', 0),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
-        DF.add_field('image_url', 'object', lambda r: upload_static_image(r['id'], width=280*3, height=160*3)),
+        DF.add_field('image', 'object', lambda r: upload_static_image(r['id'], width=280*3, height=160*3)),
         ranker(),
     ).results()
     rankings = r[0]
