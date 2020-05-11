@@ -37,5 +37,5 @@ if __name__ == '__main__':
 
     rankings = r[0]
 
-    upload_file(json.dump(rankings).encode('utf8'), 'data/city_rankings.json')
+    upload_file(json.dumps(rankings).encode('utf8'), 'data/city_rankings.json')
 
