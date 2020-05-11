@@ -1,3 +1,4 @@
 dataflows
 boto3
 requests
+fuzzywuzzy[speedup]

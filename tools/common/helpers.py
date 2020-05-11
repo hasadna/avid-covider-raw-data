@@ -11,13 +11,23 @@ from botocore.exceptions import ClientError
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 data_dir = os.path.join(root_dir, 'input')
 geo_dir = os.path.join(root_dir, 'geo')
+extra_data_dir = os.path.join(root_dir, 'data')
 
+
+def all_input_files():
+    return sorted(glob.glob(os.path.join(data_dir, '*.csv')))
+
+def latest_week_files():
+    return all_input_files()[-7:]
 
 def latest_file():
-    return sorted(glob.glob(os.path.join(data_dir, '*.csv')))[-1]
+    return all_input_files()[-1]
 
 def geo_file(name):
     return os.path.join(geo_dir, name + '.geojson')
+
+def data_file(name):
+    return os.path.join(extra_data_dir, name)
 
 def upload_file(data, object_name):
     buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']

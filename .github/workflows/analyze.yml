@@ -41,3 +41,9 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         python tools/static_map_images.py
+    - name: city ranking
+      env: 
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        python tools/city_ranking.py
