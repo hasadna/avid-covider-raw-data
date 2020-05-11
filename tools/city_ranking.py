@@ -1,6 +1,6 @@
 import json
 import dataflows as DF
-from common import latest_week_files, city_translations, upload_file
+from common import latest_week_files, city_translations, upload_file, all_input_files
 
 def ranker():
     def func(rows):
@@ -27,15 +27,40 @@ if __name__ == '__main__':
             city_name=None, scores=dict(name='score_date', aggregate='array')
         )),
         DF.filter_rows(lambda r: r['scores'][-1]['nr'] >= 200),
-        DF.add_field('sortkey', 'number', lambda r:  r['scores'][-1]['sr']),
+        DF.add_field('sortkey', 'integer', lambda r: int(r['scores'][-1]['sr'] * 1000000) + r['scores'][-1]['nr']),
         DF.sort_rows('{sortkey}', reverse=True),
         DF.delete_fields(['sortkey']),
         DF.add_field('rank', 'integer', 0),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
         ranker(),
     ).results()
-
     rankings = r[0]
 
+    r, _, _ = DF.Flow(
+        *[
+            DF.load(f, name='cities', headers=1, cast_strategy=DF.load.CAST_WITH_SCHEMA)
+            for f in all_input_files()
+        ],
+        DF.filter_rows(lambda r: r['is_city']),
+        DF.filter_rows(lambda r: r['num_reports_weighted'] >= 200),
+        DF.add_field('ws', 'number', lambda r: r['symptoms_ratio_weighted'] * r['num_reports_weighted']),
+        DF.concatenate(dict(
+            date=[], num_reports_weighted=[], ws=[]
+        ), target=dict(name='ranking')),
+        DF.join_with_self('ranking', '{date}', dict(
+            date=None, nr=dict(name='num_reports_weighted', aggregate='sum'), ws=dict(name='ws', aggregate='sum')
+        )),
+        DF.add_field('sr', 'number', lambda r: r['ws']/r['nr']),
+        DF.delete_fields(['ws']),
+        DF.sort_rows('{date}'),
+    ).results()
+
+    national = dict(
+        city_name='NATIONAL', rank=0, scores=[
+            dict(nr=rr['nr'], sr=float(rr['sr']), date=rr['date'].isoformat())
+            for rr in r[0]
+        ]
+    )
+    rankings.insert(0, national)
     upload_file(json.dumps(rankings).encode('utf8'), 'data/city_rankings.json')
 
