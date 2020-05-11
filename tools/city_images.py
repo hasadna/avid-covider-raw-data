@@ -45,7 +45,6 @@ def zoomlevel(size, lat1, lon1, lat2, lon2):
                distance(lat1, c_lon, lat2, c_lon))
     scaled = dist / cos(radians(c_lat))
     level = 78271.484 / scaled * size
-    print(dist, scaled, level)
     return min(log(level)/log(2), 20)
 
 def static_image_url(lat, lng, zoom, width, height):
@@ -64,5 +63,7 @@ def upload_static_image(id, width=600, height=400):
     zoom = zoomlevel(min(size) / 1.1, *bbox)
     path = 'data/city_preview_{}.png'.format(id)
     url = static_image_url(*ctr, zoom, *size)
-    # upload_file(requests.get(url).content, path)
-    return dict(url='/' + path, center=ctr, zoom=zoom)
+    upload_file(requests.get(url).content, path)
+    ret = dict(url='/' + path, center=ctr, zoom=zoom)
+    print(ret)
+    return ret
