@@ -1,3 +1,4 @@
+import json
 import dataflows as DF
 from common import latest_week_files, city_translations, upload_file
 
@@ -32,7 +33,6 @@ if __name__ == '__main__':
         DF.add_field('rank', 'integer', 0),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
         ranker(),
-        DF.printer()
     ).results()
 
     rankings = r[0]
