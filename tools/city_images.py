@@ -61,8 +61,8 @@ def upload_static_image(id, width=600, height=400):
     bbox = extent(*coords)
     ctr = center(*bbox)
     size = width, height
-    zoom = zoomlevel(min(size) * 1.1, *bbox)
+    zoom = zoomlevel(min(size) / 1.1, *bbox)
     path = 'data/city_preview_{}.png'.format(id)
     url = static_image_url(*ctr, zoom, *size)
     # upload_file(requests.get(url).content, path)
-    return '/' + path
+    return dict(url='/' + path, center=ctr, zoom=zoom)
