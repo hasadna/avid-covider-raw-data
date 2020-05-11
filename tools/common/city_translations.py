@@ -48,8 +48,8 @@ def prepare():
             osm.setdefault(p, {}).update(rec)
         osm.setdefault(en, {}).update(rec)
 
-    for place in langs.values():
-        k = fingerprint(place['en'])
+    for k, place in langs.items():
+        k = fingerprint(k)
         if k in osm:
             place.update(osm[k])
         else:
