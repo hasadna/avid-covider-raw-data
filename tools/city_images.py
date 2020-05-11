@@ -27,7 +27,17 @@ def extent(lats, lons):
     return (min(lats), min(lons), max(lats), max(lons))
 
 def split_coordinates(coordinates):
-    return [x[1] for x in coordinates], [x[0] for x in coordinates]
+    if not isinstance(coordinates[0], list):
+        assert len(coordinates) == 2
+        return [coordinates[1]], [coordinates[0]]
+    else:
+        conv = [split_coordinates(x) for x in coordinates]
+        lats = []
+        lons = []
+        for lat, lon in conv:
+            lats.extend(lat)
+            lons.extend(lon)
+        return lats, lons
 
 def zoomlevel(size, lat1, lon1, lat2, lon2):
     c_lat, c_lon = center(lat1, lon1, lat2, lon2)
@@ -46,12 +56,13 @@ def static_image_url(lat, lng, zoom, width, height):
 def upload_static_image(id, width=600, height=400):
     features = json.load(open(geo_file('cities')))
     feature = next(filter(lambda f: f['properties']['id'] == id, features['features']))
-    coords = split_coordinates(feature['geometry']['coordinates'][0])
+    coords = split_coordinates(feature['geometry']['coordinates'])
+    # print(feature)
     bbox = extent(*coords)
     ctr = center(*bbox)
     size = width, height
     zoom = zoomlevel(min(size) * 1.1, *bbox)
     path = 'data/city_preview_{}.png'.format(id)
     url = static_image_url(*ctr, zoom, *size)
-    upload_file(requests.get(url).content, path)
+    # upload_file(requests.get(url).content, path)
     return '/' + path
