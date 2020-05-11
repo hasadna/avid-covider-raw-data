@@ -42,6 +42,7 @@ def prepare():
     for item in s.iter(keyed=True):
         he = item['שם_ישוב'].strip().replace('(', 'XXX').replace(')', '(').replace('XXX', ')').replace('  ', ' ')
         en = item['שם_ישוב_לועזי'].strip().replace('  ', ' ').replace("'", 'xxx').title().replace('xxx', "'").replace('Xxx', "'")
+        en = en.replace("'", 'xxx').title().replace('xxx', "'").replace('Xxx', "'")
         rec = dict(en=en, he=he)
         osm.setdefault(he, {}).update(rec)
         for p in en.split('-'):
