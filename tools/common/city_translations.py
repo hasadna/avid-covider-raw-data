@@ -25,7 +25,7 @@ def prepare():
             city_name=[]
         ))
     ).results()
-    langs = dict((k, dict(en=k)) for k in set(x['city_name'] for x in langs[0]))
+    langs = dict((k, dict()) for k in set(x['city_name'] for x in langs[0]))
 
     osm = {}
     s = tabulator.Stream(data_file('places.csv'))
@@ -42,7 +42,6 @@ def prepare():
     for item in s.iter(keyed=True):
         he = item['שם_ישוב'].strip().replace('(', 'XXX').replace(')', '(').replace('XXX', ')').replace('  ', ' ')
         en = item['שם_ישוב_לועזי'].strip().replace('  ', ' ').replace("'", 'xxx').title().replace('xxx', "'").replace('Xxx', "'")
-        en = en.replace("'", 'xxx').title().replace('xxx', "'").replace('Xxx', "'")
         rec = dict(en=en, he=he)
         osm.setdefault(he, {}).update(rec)
         for p in en.split('-'):
@@ -52,13 +51,11 @@ def prepare():
     for place in langs.values():
         k = fingerprint(place['en'])
         if k in osm:
-            osm[k].update(place)
             place.update(osm[k])
         else:
             match = process.extractOne(k, osm.keys(), scorer=fuzz.ratio)
             if match[1] >= 50:
                 k = match[0]
-                osm[k].update(place)
                 place.update(osm[k])
             else:
                 print('no match for', place, k, match)
