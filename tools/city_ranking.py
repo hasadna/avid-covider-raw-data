@@ -1,6 +1,7 @@
 import json
 import dataflows as DF
 from common import latest_week_files, city_translations, upload_file, all_input_files
+from city_images import upload_static_image
 
 def ranker():
     def func(rows):
@@ -21,10 +22,10 @@ if __name__ == '__main__':
             date=r['date'].isoformat(), sr=float(r['symptoms_ratio_weighted']), nr=int(r['num_reports_weighted']))
         ),
         DF.concatenate(dict(
-            city_name=[], score_date=[]
+            id=[], score_date=[]
         ), target=dict(name='ranking')),
         DF.join_with_self('ranking', '{city_name}', dict(
-            city_name=None, scores=dict(name='score_date', aggregate='array')
+            id=None, scores=dict(name='score_date', aggregate='array')
         )),
         DF.filter_rows(lambda r: r['scores'][-1]['nr'] >= 200),
         DF.add_field('sortkey', 'integer', lambda r: int(r['scores'][-1]['sr'] * 1000000) + r['scores'][-1]['nr']),
@@ -32,6 +33,7 @@ if __name__ == '__main__':
         DF.delete_fields(['sortkey']),
         DF.add_field('rank', 'integer', 0),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
+        DF.add_field('image_url', 'string', lambda r: upload_static_image(r['id']))
         ranker(),
     ).results()
     rankings = r[0]
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     ).results()
 
     national = dict(
-        city_name='NATIONAL', rank=0, scores=[
+        id='NATIONAL', rank=0, scores=[
             dict(nr=rr['nr'], sr=float(rr['sr']), date=rr['date'].isoformat())
             for rr in r[0]
         ]
