@@ -1,5 +1,5 @@
 import dataflows as DF
-from common import latest_week_files, city_translations
+from common import latest_week_files, city_translations, upload_file
 
 def ranker():
     def func(rows):
