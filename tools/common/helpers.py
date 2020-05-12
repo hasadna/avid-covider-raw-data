@@ -32,6 +32,10 @@ def data_file(name):
 def upload_file(data, object_name):
     buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']
     
+    if 'AWS_ACCESS_KEY' not in os.environ:
+      print('Skipping upload of {}'.format(object_name))
+      return True
+
     # Upload the file
     s3_client = boto3.client('s3', region_name='eu', endpoint_url='https://storage.googleapis.com',
                     aws_access_key_id=os.environ['AWS_ACCESS_KEY'], aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'])
