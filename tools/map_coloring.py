@@ -58,7 +58,8 @@ if __name__ == '__main__':
         DF.load(latest_file(), name='cities', cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.filter_rows(lambda r: r['is_city']),
         DF.load(latest_file(), name='out', cast_strategy=DF.load.CAST_WITH_SCHEMA),
-        DF.join('cities', ['city_name'], 'out', ['city_name'], dict(
+        DF.add_field('city_area_id', 'string', lambda r: r['area_id'].split('-')[0]),
+        DF.join('cities', ['city_area_id'], 'out', ['city_area_id'], dict(
             num_city_reports=dict(name='num_reports_weighted')
         )),
         DF.add_field('desc', 'string', ''),
