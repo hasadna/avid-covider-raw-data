@@ -1,5 +1,6 @@
 import json
 import dataflows as DF
+import time
 from common import latest_week_files, city_translations, upload_file, all_input_files
 from city_images import upload_static_image
 
@@ -11,6 +12,8 @@ def ranker():
     return func
 
 if __name__ == '__main__':
+
+    time.sleep(600)
 
     r, _, _ = DF.Flow(
         *[
