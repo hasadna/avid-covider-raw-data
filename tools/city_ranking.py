@@ -13,8 +13,6 @@ def ranker():
 
 if __name__ == '__main__':
 
-    time.sleep(600)
-
     r, _, _ = DF.Flow(
         *[
             DF.load(f, name='cities', headers=1, cast_strategy=DF.load.CAST_WITH_SCHEMA)
