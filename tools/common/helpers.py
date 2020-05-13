@@ -34,6 +34,8 @@ def upload_file(data, object_name):
     
     if 'AWS_ACCESS_KEY' not in os.environ:
       print('Skipping upload of {}'.format(object_name))
+      with open(object_name, 'wb') as f:
+          f.write(data)
       return True
 
     # Upload the file
