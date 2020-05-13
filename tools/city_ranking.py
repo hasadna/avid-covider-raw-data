@@ -55,7 +55,6 @@ if __name__ == '__main__':
         DF.add_field('sr', 'number', lambda r: r['ws']/r['nr']),
         DF.delete_fields(['ws']),
         DF.sort_rows('{date}'),
-        DF.printer(),
     ).results()
 
     national = dict(
