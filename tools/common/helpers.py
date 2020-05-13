@@ -45,6 +45,7 @@ def upload_file(data, object_name):
             response = s3_client.put_object(Body=data, Bucket=bucket_name, Key=object_name,
                                             ACL='public-read', CacheControl='max-age=600',
                                             ContentType=mimetype)
+            print('uploaded', object_name, 'to', bucket_name)
         except ClientError as e:
             logging.error(e)
             return False
