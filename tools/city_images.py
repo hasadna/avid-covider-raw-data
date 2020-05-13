@@ -48,7 +48,7 @@ def zoomlevel(size, lat1, lon1, lat2, lon2):
     return min(log(level)/log(2), 20)
 
 def static_image_url(lat, lng, zoom, width, height):
-    ret = f'https://api.mapbox.com/styles/v1/wios/ck9spo9jo02p71ip3m6xfchxk/static/' +\
+    ret = f'https://api.mapbox.com/styles/v1/wios/ck9spo9jo02p71ip3m6xfchxk/draft/static/' +\
           f'{lng},{lat},{zoom},0/{width}x{height}@2x' +\
           f'?access_token=pk.eyJ1Ijoid2lvcyIsImEiOiJjazh4ZXZ6Z24wejdtM3JvN2F1MHdlc2Z4In0.vz7knGcRWWGE4LGOLx8c7g'
     print('static image url:', ret)
