@@ -33,9 +33,13 @@ def prepare():
     for item in s.iter():
         if len(item) == 0: continue
         item = json.loads(item[0])
-        item = dict(('he' if k=='name' else k[5:], v) for k, v in item.items() if k.startswith('name'))
-        for v in item.values():
-            osm[fingerprint(v)] = item
+        names = dict(('he' if k=='name' else k[5:], v) for k, v in item.items() if k.startswith('name'))
+        for v in names.values():
+            osm[fingerprint(v)] = names
+        old_names = dict(('he' if k=='old_name' else k[9:], v) for k, v in item.items() if k.startswith('old_name'))
+        for v in old_names.values():
+            for vv in v.split(';'):
+                osm[fingerprint(vv)] = names
 
     s = tabulator.Stream(data_file('yeshuvim.csv'), headers=1)
     s.open()
@@ -48,8 +52,8 @@ def prepare():
             osm.setdefault(p, {}).update(rec)
         osm.setdefault(en, {}).update(rec)
 
-    for k, place in langs.items():
-        k = fingerprint(k)
+    for kk, place in langs.items():
+        k = fingerprint(kk)
         if k in osm:
             place.update(osm[k])
         else:
