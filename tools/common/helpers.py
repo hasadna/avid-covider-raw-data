@@ -15,7 +15,7 @@ extra_data_dir = os.path.join(root_dir, 'data')
 
 
 def all_input_files():
-    return sorted(glob.glob(os.path.join(data_dir, '*.csv')))
+    return sorted(glob.glob(os.path.join(data_dir, '20*.csv')))
 
 def latest_week_files():
     return all_input_files()[-7:]
