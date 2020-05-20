@@ -19,7 +19,9 @@ def sort_limit_scores():
 if __name__ == '__main__':
 
     r, _, _ = DF.Flow(
-        DF.load(all_data(), name='cities', headers=1, cast_strategy=DF.load.CAST_WITH_SCHEMA),
+        DF.load(all_data(), name='cities', headers=1,
+                override_fields=dict(area_id=dict(type='string')),
+                cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.filter_rows(lambda r: r['is_city']),
         DF.add_field('score_date', 'object', lambda r: dict(
             date=r['date'].isoformat(), sr=float(r['symptoms_ratio_weighted'] or 0), nr=int(r['num_reports_weighted']))
@@ -43,7 +45,9 @@ if __name__ == '__main__':
     rankings = r[0]
 
     r, _, _ = DF.Flow(
-        DF.load(all_data(), name='cities', headers=1, cast_strategy=DF.load.CAST_WITH_SCHEMA),
+        DF.load(all_data(), name='cities', headers=1,
+                override_fields=dict(area_id=dict(type='string')),
+                cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.filter_rows(lambda r: r['is_city']),
         DF.filter_rows(lambda r: r['num_reports_weighted'] >= 200),
         DF.add_field('ws', 'number', lambda r: r['symptoms_ratio_weighted'] * r['num_reports_weighted']),

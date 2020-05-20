@@ -34,7 +34,9 @@ def process_file(key, is_city, filename, latest):
 
 if __name__ == '__main__':
     data, _, _ = DF.Flow(
-        DF.load(latest_file(), name='out', cast_strategy=DF.load.CAST_WITH_SCHEMA),
+        DF.load(latest_file(), name='out', 
+                override_fields=dict(area_id=dict(type='string')),
+                cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.concatenate(dict(
             id=[],
             is_city=[],
