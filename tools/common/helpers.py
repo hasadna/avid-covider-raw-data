@@ -20,6 +20,9 @@ def all_input_files():
 def latest_week_files():
     return all_input_files()[-7:]
 
+def all_data():
+    return os.path.join(data_dir, 'all_dates.csv')
+
 def latest_file():
     return all_input_files()[-1]
 
@@ -30,7 +33,7 @@ def data_file(name):
     return os.path.join(extra_data_dir, name)
 
 def upload_file(data, object_name):
-    buckets = ['avid-covider.phonaris.com', 'coronaisrael.org']
+    buckets = ['avid-covider.phonaris.com']#, 'coronaisrael.org']
     
     if 'AWS_ACCESS_KEY' not in os.environ:
       print('Skipping upload of {}'.format(object_name))
