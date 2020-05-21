@@ -79,6 +79,7 @@ def prepare():
             he=v.get('he'),
             en=v.get('en'),
             es=v.get('es', v.get('en')),
+            es=v.get('fr', v.get('en')),
             ru=v.get('ru', v.get('en')),
             ar=v.get('ar', v.get('he'))
         )) for k, v in langs.items()
