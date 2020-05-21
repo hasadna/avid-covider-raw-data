@@ -35,29 +35,32 @@ def prepare():
             continue
         osm_he.setdefault(fingerprint(he), {}).update(item)
 
-    osm = {}
-    for item in osm_he.values():
-        names = dict((k[5:], v) for k, v in item.items() if k.startswith('name'))
-        if 'name' not in item and 'he' not in names:
-            continue
-        names.setdefault('he', item.get('name'))
-        for v in names.values():
-            osm.setdefault(fingerprint(v), {}).update(names)
-        old_names = dict(('he' if k=='old_name' else k[9:], v) for k, v in item.items() if k.startswith('old_name'))
-        for v in old_names.values():
-            for vv in v.split(';'):
-                osm.setdefault(fingerprint(vv), {}).update(names)
-
     s = tabulator.Stream(data_file('yeshuvim.csv'), headers=1)
     s.open()
     for item in s.iter(keyed=True):
         he = item['שם_ישוב'].strip().replace('(', 'XXX').replace(')', '(').replace('XXX', ')').replace('  ', ' ')
         en = item['שם_ישוב_לועזי'].strip().replace('  ', ' ').replace("'", 'xxx').title().replace('xxx', "'").replace('Xxx', "'")
-        rec = dict(en=en, he=he)
-        osm.setdefault(he, {}).update(rec)
-        for p in en.split('-'):
-            osm.setdefault(p, {}).update(rec)
-        osm.setdefault(en, {}).update(rec)
+        rec = {'name:en': en, 'name:he':he}
+        he = fingerprint(he)
+        osm_he.setdefault(he, {}).update(rec)
+
+    osm = {}
+    for item in osm_he.values():
+        names = dict((k[5:], v) for k, v in item.items() if k.startswith('name:'))
+        if 'name' not in item and 'he' not in names:
+            continue
+        names.setdefault('he', item.pop('name', None))
+        for v in names.values():
+            osm.setdefault(fingerprint(v), {}).update(names)
+        en = names.get('en')
+        if en and '-' in en:
+            for v in en.split('-'):
+                osm.setdefault(fingerprint(v), {}).update(names)
+
+        old_names = dict(('he' if k=='old_name' else k[9:], v) for k, v in item.items() if k.startswith('old_name'))
+        for v in old_names.values():
+            for vv in v.split(';'):
+                osm.setdefault(fingerprint(vv), {}).update(names)
 
     for kk, place in langs.items():
         k = fingerprint(kk)
