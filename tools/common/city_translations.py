@@ -6,7 +6,7 @@ from fuzzywuzzy import process, fuzz
 import os
 import dataflows as DF
 
-from .helpers import data_file, all_input_files
+from .helpers import data_file, all_data
 
 DATA_FILE = data_file('cities_i18n.json')
 
@@ -17,23 +17,30 @@ def prepare():
         return ''.join(fp.findall(x.upper()))
 
     langs, _, _ = DF.Flow(
-        *[
-            DF.load(f)
-            for f in all_input_files()
-        ],
+        DF.load(all_data()),
         DF.concatenate(dict(
             city_name=[]
         ))
     ).results()
     langs = dict((k, dict()) for k in set(x['city_name'] for x in langs[0]))
 
-    osm = {}
+    osm_he = {}
     s = tabulator.Stream(data_file('places.csv'))
     s.open()
     for item in s.iter():
         if len(item) == 0: continue
         item = json.loads(item[0])
-        names = dict(('he' if k=='name' else k[5:], v) for k, v in item.items() if k.startswith('name') and v.strip())
+        he = item.get('name:he', item.get('name'))
+        if he is None:
+            continue
+        osm_he.setdefault(fingerprint(he), {}).update(item)
+
+    osm = {}
+    for item in osm_he.values():
+        names = dict((k[5:], v) for k, v in item.items() if k.startswith('name'))
+        if 'name' not in item and 'he' not in names:
+            continue
+        names.setdefault('he', item.get('name'))
         for v in names.values():
             osm.setdefault(fingerprint(v), {}).update(names)
         old_names = dict(('he' if k=='old_name' else k[9:], v) for k, v in item.items() if k.startswith('old_name'))
