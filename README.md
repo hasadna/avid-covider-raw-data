@@ -1,8 +1,12 @@
 # avid-covider-raw-data
 
+[להורדת](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv) קובץ הנתונים הגולמיים השלם של כל הדיווחים ([input/all_dates.csv](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv))
+
+To the full raw data csv file, download [input/all_dates.csv](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv)
+
 ## Format of raw data 
 
-All raw data should be uploaded to the `input/` directory.
+All raw data should be uploaded to the [`input/` directory](https://github.com/hasadna/avid-covider-raw-data/tree/master/input).
 
 Data for a single day should be uploaded in a single CSV file.
 
