@@ -1,5 +1,7 @@
 # avid-covider-raw-data
 
+This repository contains aggregated data from several sources. At time of writing the sources are: [avid-covider web-app](https://github.com/hasadna/avid-covider), Google Forms, Maccabi (HMO), Clalit (HMO).
+
 [להורדת](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv) קובץ הנתונים הגולמיים השלם של כל הדיווחים ([input/all_dates.csv](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv))
 
 To the full raw data csv file, download [input/all_dates.csv](https://raw.githubusercontent.com/hasadna/avid-covider-raw-data/master/input/all_dates.csv)
