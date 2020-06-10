@@ -3,13 +3,8 @@ import decimal
 import os
 import logging
 import dataflows as DF
-from common import geo_file, latest_file, upload_file, upload_tileset
+from common import geo_file, latest_file, upload_file, upload_tileset, json_encoder
 
-class encoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        return JSONEncoder.default(self, o)
 
 
 def process_file(key, is_city, filename, latest):
@@ -25,7 +20,7 @@ def process_file(key, is_city, filename, latest):
         properties.update(
             latest.get((properties['id'], is_city), default)
         )
-    upload = json.dumps(gj, cls=encoder).encode('utf8')
+    upload = json.dumps(gj, cls=json_encoder).encode('utf8')
     path = 'data/tilesets/static-images-{}.geojson'.format(key)
     logging.info('UPLOADING %d bytes to %s', len(upload), path)
     upload_file(upload, path)

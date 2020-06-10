@@ -2,6 +2,7 @@ import glob
 import os
 import logging
 import tempfile
+import json
 from io import BytesIO
 from mimetypes import guess_type
 
@@ -56,5 +57,8 @@ def upload_file(data, object_name):
             return False
     return True
 
-    
-
+class json_encoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return JSONEncoder.default(self, o)

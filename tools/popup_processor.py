@@ -2,7 +2,7 @@ import json
 import dataflows as DF
 import time
 import datetime
-from common import all_data, city_translations, upload_file
+from common import all_data, city_translations, upload_file, json_encoder
 from city_images import upload_static_image
 
 def sort_limit_scores():
@@ -95,5 +95,5 @@ if __name__ == '__main__':
     popup_data = r[0]
     popup_data = dict((x.pop('id'), x) for x in popup_data)
 
-    upload_file(json.dumps(popup_data, indent=2).encode('utf8'), 'data/popup_data.json')
+    upload_file(json.dumps(popup_data, cls=json_encoder, indent=2).encode('utf8'), 'data/popup_data.json')
 
