@@ -6,7 +6,27 @@ from city_images import upload_static_image
 
 def sort_limit_scores():
     def func(row):
-        row['scores'] = sorted(row.get('scores', []), key=lambda r: r['date'])[-28:]
+        scores = sorted(row.get('scores', []), key=lambda r: r['date'])
+        expected = scores[-1]['date'] - 27
+        expected_weekday = (scores[-1]['weekday'] + 1) % 7
+        filled = []
+        while len(scores) > 0:
+            item = scores.pop(0)
+            if item['date'] < expected:
+                continue
+            while item['date'] > expected:
+                filled.append(dict(
+                    weekday = expected_weekday, sr=0, nr=0, date=expected
+                ))
+                expected += 1
+                expected_weekday += 1
+                expected_weekday %= 7
+            filled.append(item)
+            expected += 1
+            expected_weekday += 1
+            expected_weekday %= 7
+        row['scores'] = filled
+
     return func
 
 def split_to_weeks():
@@ -19,8 +39,9 @@ def split_to_weeks():
                 if len(week) > 0:
                     weeks.append(week)
                     week = []
+            i.pop('date', None)
             week.append(i)
-            assert len(week) <= 7
+            assert len(week) <= 7, 'too long week %r (row=%r)' % (week, row)
         if len(week) > 0:
             weeks.append(week)
             week = []
@@ -50,7 +71,7 @@ if __name__ == '__main__':
                 cast_strategy=DF.load.CAST_WITH_SCHEMA),
         DF.filter_rows(lambda r: r['is_city']),
         DF.add_field('score_date', 'object', lambda r: dict(
-            weekday=r['date'].isoweekday() % 7, date=r['date'].isoformat(), sr=float(r['symptoms_ratio_weighted'] or 0), nr=int(r['num_reports_weighted']))
+            weekday=r['date'].isoweekday() % 7, date=r['date'].toordinal(), sr=float(r['symptoms_ratio_weighted'] or 0), nr=int(r['num_reports_weighted']))
         ),
         DF.concatenate(dict(
             id=[], city_name=[], score_date=[]
@@ -58,12 +79,13 @@ if __name__ == '__main__':
         DF.join_with_self('popup_data', '{city_name}', dict(
             id=None, city_name=None, scores=dict(name='score_date', aggregate='array')
         )),
+        # DF.checkpoint('popup_data'),
         sort_limit_scores(),
         split_to_weeks(),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
     ).results()
     popup_data = r[0]
-    popup_data = dict((x['id'], x) for x in popup_data)
+    popup_data = dict((x.pop('id'), x) for x in popup_data)
 
     upload_file(json.dumps(popup_data, indent=2).encode('utf8'), 'data/popup_data.json')
 
