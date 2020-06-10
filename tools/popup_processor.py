@@ -85,7 +85,6 @@ if __name__ == '__main__':
         DF.join_with_self('popup_data', '{city_name}', dict(
             id=None, city_name=None, scores=dict(name='score_date', aggregate='array')
         )),
-        # DF.checkpoint('popup_data'),
         sort_limit_scores(),
         DF.filter_rows(lambda r: r['scores'] is not None),
         split_to_weeks(),
