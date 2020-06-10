@@ -87,6 +87,7 @@ if __name__ == '__main__':
         )),
         sort_limit_scores(),
         DF.filter_rows(lambda r: r['scores'] is not None),
+        DF.add_field('lastWeekReporters', 'integer', lambda r: r['scores'][-1]['nr']),
         split_to_weeks(),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
     ).results()
