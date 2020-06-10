@@ -1,13 +1,19 @@
 import json
 import dataflows as DF
 import time
+import datetime
 from common import all_data, city_translations, upload_file
 from city_images import upload_static_image
 
 def sort_limit_scores():
+    today = datetime.date.today().toordinal()
     def func(row):
         scores = sorted(row.get('scores', []), key=lambda r: r['date'])
-        expected = scores[-1]['date'] - 27
+        last = scores[-1]['date']
+        if today - last > 7:
+            row['scores'] = None
+            return
+        expected = last - 27
         expected_weekday = (scores[-1]['weekday'] + 1) % 7
         filled = []
         while len(scores) > 0:
@@ -81,6 +87,7 @@ if __name__ == '__main__':
         )),
         # DF.checkpoint('popup_data'),
         sort_limit_scores(),
+        DF.filter_rows(lambda r: r['scores'] is not None),
         split_to_weeks(),
         DF.add_field('translations', 'object', lambda r: city_translations[r['city_name']]),
     ).results()
