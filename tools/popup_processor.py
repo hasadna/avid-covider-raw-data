@@ -13,6 +13,8 @@ def sort_limit_scores():
         if today - last > 7:
             row['scores'] = None
             return
+        dom = datetime.date.fromordinal(last).day
+        scores[-1]['dom'] = dom
         expected = last - 27
         expected_weekday = (scores[-1]['weekday'] + 1) % 7
         filled = []
