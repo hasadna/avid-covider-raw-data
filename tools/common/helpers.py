@@ -3,6 +3,7 @@ import os
 import logging
 import tempfile
 import json
+import decimal
 from io import BytesIO
 from mimetypes import guess_type
 
